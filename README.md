@@ -1,6 +1,6 @@
 # About
 
-The purpose of this repo is to run the experiment detailed in /Multi-speaker Speech Recognition using Articulator Pose Estimation on Silent versus Voiced Speech/. In this experiment, ASR is performed not on the sound produced while speaking, but from the articulators. Video of the lips and ultrasound of the tongue are taken from the TaL corpus. These videos are run through a pre-trained model in DeepLabCut, in order to extract the location of the x and y coordinates of the articulators over time. These series of coordinates over time are transformed into feature vectors which are fed into a DNN-HMM system in Kaldi.
+The purpose of this repo is to run the experiment detailed in / Multi-speaker Speech Recognition using Articulator Pose Estimation on Silent versus Voiced Speech /. In this experiment, ASR is performed not on the sound produced while speaking, but from the articulators. Video of the lips and ultrasound of the tongue are taken from the TaL corpus. These videos are run through a pre-trained model in DeepLabCut, in order to extract the location of the x and y coordinates of the articulators over time. These series of coordinates over time are transformed into feature vectors which are fed into a DNN-HMM system in Kaldi.
 
 In the original experiment, two test sets were split from the TaL corpus, one made of utterances spoken silently and another made of utterances spoken aloud. The two test sets were designed to have the same text represented in each modality. This repo produces the same training and test split.
 
