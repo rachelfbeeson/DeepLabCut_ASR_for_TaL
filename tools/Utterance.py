@@ -30,10 +30,6 @@ class Utterance:
             matrix = numpy.vstack(matrix).astype(float)
             std_slc = StandardScaler()
             X_std = std_slc.fit_transform(matrix)
-            if self.id == '73fe-166_aud':
-                with open('debug.txt', 'w') as f:
-                    numpy.set_printoptions(threshold=numpy.prod(matrix.shape))
-                    f.write(numpy.array_str(matrix))
             self.combined_feats = X_std
         else:
             self.discarded = True # to track what was thrown out

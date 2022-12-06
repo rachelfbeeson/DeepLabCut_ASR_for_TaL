@@ -115,7 +115,7 @@ class KaldiFileMaker:
 
         for utt in utts:
             if utt.discarded:
-                pass
+                continue
             self.s2g.append(utt.speaker + ' ' + utt.gender + '\n')
             self.s2g = list(set(self.s2g))
             text_content = re.sub(r'[^\w|\s|\']', '', utt.text)
