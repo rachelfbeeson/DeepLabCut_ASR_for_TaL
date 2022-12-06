@@ -15,7 +15,7 @@ class KaldiFileMaker:
         self.dict = {}
         self.beep = config.getboolean('PostDLC', 'beep')
         self.s2g = []
-        self.wav = []
+        self.wav = []  # not making wav.scp for this experiment but here if needed in future
         self.text = []
         self.u2s = []
         self.feats = []
@@ -107,7 +107,7 @@ class KaldiFileMaker:
     def make_kaldi_files(self, utts, split):
         """
         Creates the files specific to the data splits, in addition to the corpus of the entire data set.
-        speak2gender, wav.scp, utt2spk, and text.
+        speak2gender, utt2spk, and text.
         The contents of these files are prescribed by Kaldi.
         @param utts: List of utterance objects from one split
         @param split: string for which split the utt belongs to
@@ -118,8 +118,6 @@ class KaldiFileMaker:
                 pass
             self.s2g.append(utt.speaker + ' ' + utt.gender + '\n')
             self.s2g = list(set(self.s2g))
-            wav_path = utt.base_path + '.wav'
-            self.wav.append(utt.id + ' ' + wav_path + '\n')
             text_content = re.sub(r'[^\w|\s|\']', '', utt.text)
             text_content = text_content.lower()
             self.text.append(utt.id + ' ' + text_content)
@@ -127,14 +125,12 @@ class KaldiFileMaker:
             self.u2s.append(utt.id + ' ' + utt.speaker + '\n')
             self.kaldi_features(utt)
         self.s2g.sort()
-        self.wav.sort()
         self.text.sort()
         self.u2s.sort()
         self.write_files(split)
 
         # prepare for next split
         self.s2g = []
-        self.wav = []
         self.text = []
         self.u2s = []
         self.feats = []
@@ -144,8 +140,6 @@ class KaldiFileMaker:
         path = os.path.join("data", split)
         if not os.path.isdir(path):
             os.mkdir(path)
-
-        # not using wavs for this experiment so not making wav.scp
 
         files_to_write = [self.s2g, self.text, self.u2s, self.feats, str(self.frame_shift)]
         file_names = ['spk2gender', 'text', 'utt2spk', 'feats.txt', 'frame_shift']

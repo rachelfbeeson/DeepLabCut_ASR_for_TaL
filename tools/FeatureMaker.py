@@ -40,16 +40,16 @@ class FeatureMaker:
         csv_file = glob.glob(os.path.join(self.video_folder, f'{utterance.id}*.csv'))[0]
         self.features = pandas.read_csv(csv_file,
                                         header=[1, 2])  # headers are two parts, anatomy and then x, y or likelihood
-        self.feature_maker(utterance)
+        self.feature_maker()
 
-    def feature_maker(self,utterance):
+    def feature_maker(self):
         """ Driver for feature manipulation. """
         if self.likelihood_filter:
             self.likelihood_filtering()
         if self.outlier_filter:
             self.outlier_filtering()
         if self.lowpass_filter:
-            self.low_pass_filtering(utterance)
+            self.low_pass_filtering()
         self.features.drop([(part, 'likelihood') for part in self.anatomy], axis=1, inplace=True)
         if self.features.isnull().values.any():
             self.features = pandas.DataFrame()
@@ -83,7 +83,7 @@ class FeatureMaker:
                                              other=numpy.nan, inplace=True)
         self.features.interpolate(axis=0, limit_direction='both', inplace=True)
 
-    def low_pass_filtering(self,utterance):
+    def low_pass_filtering(self):
         """
         Low pass filters the features using a 3rd order butterworth filter with a chosen threshold.
         Articulators have been observed to not exceed 9 syll per second.

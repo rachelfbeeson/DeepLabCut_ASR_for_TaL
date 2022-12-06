@@ -9,14 +9,15 @@ class Utterance:
     """
     Holds all the information about each utterance in the TaL corpus including speaker, gender, split etc.
     """
-    def __init__(self, id, split, text, tal_path):
+    def __init__(self, id, modality, text, base_path):
         self.id = id
-        self.split = split
+        self.modality = modality
+        self.split = ''
         self.text = text
         [self.speaker, self.utt_id] = id.split('-')
         self.gender = self.speaker[2]
         self.duration = None
-        self.base_path = os.path.join(tal_path,self.speaker,self.utt_id)
+        self.base_path = base_path
         self.lip_features = []
         self.us_features = []
         self.combined_feats = None

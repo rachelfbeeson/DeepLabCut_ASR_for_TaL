@@ -26,49 +26,80 @@ class UtteranceController:
         self.lip_anatomy = ['leftLip', 'rightLip', 'topleftinner', 'bottomleftinner', 'toprightinner', 'bottomrightinner',
                'topmidinner', 'bottommidinner']
         self.make_features = make_features
+        self.shared_text = []
 
-    def utterance_sets(self):
+    def make_utts(self):
         """
-        Walks through the TaL corpus and creates the utterance objects, determining which split they belong to.
-        For the purposes of the original experiment, the two test splits are all
-        the utterances which share the same text in both silent and
-        audible modalities.
+        Walks through the TaL corpus and creates the utterance objects, and builds the list of utterance
+        objects.
+        If the tal_path points to a file, it will assume the format of utt_id text and try to build
+        the utterance objects that way.
+        Also builds a list of text shared across modalities to use for making sets.
         """
-        sil_dict = {}
-        mod_dict = {}
+        silent = []
+        modal = []
 
-        for folder in os.listdir(self.tal_path):
-            folder_name = os.path.join(self.tal_path, folder)
-            for file_name in os.listdir(folder_name):
-                [utt_id, ext] = file_name.split('.')
-                # should be one param file for every utterance
-                if ext == 'param':
-                    base_path = os.path.join(folder_name, utt_id)
-                    utt_name = folder + '-' + utt_id
-                    with open(base_path + '.txt', 'r') as f:
-                        text = f.readline()
-                        if 'sil' in utt_name:
-                            sil_dict[utt_name] = text
-                        elif 'aud' in utt_name:
-                            mod_dict[utt_name] = text
-                else:
-                    continue
+        if os.path.isdir(self.tal_path):
+            for folder in os.listdir(self.tal_path):
+                folder_name = os.path.join(self.tal_path, folder)
+                for file_name in os.listdir(folder_name):
+                    [utt_id, ext] = file_name.split('.')
+                    # should be one param file for every utterance
+                    if ext == 'param':
+                        base_path = os.path.join(folder_name, utt_id)
+                        utt_name = folder + '-' + utt_id
+                        with open(base_path + '.txt', 'r') as f:
+                            text = f.readline()
+                            if 'sil' in utt_name:
+                                utterance = Utterance(utt_name, 'silent', text, base_path)
+                                self.utterance_list.append(utterance)
+                                silent.append(text)
+                            elif 'aud' in utt_name:
+                                utterance = Utterance(utt_name, 'modal', text, base_path)
+                                self.utterance_list.append(utterance)
+                                modal.append(text)
+                    else:
+                        continue
 
-        silent = set(sil_dict.values())
-        modal = set(mod_dict.values())
-        shared = silent.intersection(modal)
+        elif os.path.isfile(self.tal_path):
+            with open(self.tal_path, 'r') as f:
+                utterances = f.readlines()
+            for line in utterances:
+                [utt_id, text] = line.split(' ', 1)
+                if 'sil' in utt_id:
+                    utterance = Utterance(utt_id, 'silent', text, base_path=None)
+                    self.utterance_list.append(utterance)
+                    silent.append(text)
+                elif 'aud' in utt_id:
+                    utterance = Utterance(utt_id, 'modal', text, base_path=None)
+                    self.utterance_list.append(utterance)
+                    modal.append(text)
 
-        for utt in mod_dict:
-            if mod_dict[utt] in shared:
-                utterance = Utterance(utt,'mod_test',mod_dict[utt],self.tal_path)
-                self.utterance_list.append(utterance)
+        silent = set(silent)
+        modal = set(modal)
+        self.shared_text = silent.intersection(modal)
+
+    def make_sets(self):
+        """
+        Determines the split of the utterances. Utterances which share text in different modalities
+        are labelled with a test split.
+        """
+        none_utts = []
+
+        for utt in self.utterance_list:
+            if utt.text in self.shared_text:
+                if utt.modality == 'silent':
+                    utt.split = 'sil_test'
+                if utt.modality == 'modal':
+                    utt.split = 'mod_test'
             else:
-                utterance = Utterance(utt,'train', mod_dict[utt], self.tal_path)
-                self.utterance_list.append(utterance)
-        for utt in sil_dict:
-            if sil_dict[utt] in shared:
-                utterance = Utterance(utt, 'sil_test', sil_dict[utt], self.tal_path)
-                self.utterance_list.append(utterance)
+                if utt.modality == 'modal':
+                    utt.split = 'train'
+                else:
+                    none_utts.append(utt)
+
+        for utt in none_utts:
+            self.utterance_list.remove(utt)
 
     def make_videos(self):
         """ Make videos of all the utterances in the list """
@@ -95,14 +126,17 @@ class UtteranceController:
         """ Creates the necessary Kaldi files from the splits determined earlier. """
         kaldi_file_maker = KaldiFileMaker()
         kaldi_file_maker.make_dirs()
+        self.utterance_list.sort(key=lambda x: x.split)
         for split, utts in itertools.groupby(self.utterance_list, key=lambda utt: utt.split):
-            kaldi_file_maker.make_kaldi_files(utts, split)
+            if split != '':
+                kaldi_file_maker.make_kaldi_files(utts, split)
         kaldi_file_maker.make_language_files()
 
     def forward(self):
         """ Main driver for the controller, going through all the utterance processing steps. """
         print('===Making utterances from TaL Corpus===')
-        self.utterance_sets()
+        self.make_utts()
+        self.make_sets()
         if self.make_features:
             print('===Making videos for DLC usage===')
             self.make_videos()
