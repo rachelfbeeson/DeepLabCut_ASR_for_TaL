@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#pip install deeplabcut[tf]
+pip install deeplabcut[tf]
 
-#git clone https://github.com/articulateinstruments/DeepLabCut-for-Speech-Production.git
+git clone https://github.com/articulateinstruments/DeepLabCut-for-Speech-Production.git
 
 other_files=DeepLabCut-for-Speech-Production/Installation_Instructions/Other_Files
 
@@ -38,14 +38,3 @@ sed 's.REPLACE_PATH.'$Lips_project'.g' $other_files/autoPoseCfgLipsResNetTest > 
 sed 's.REPLACE_PATH.'$Lips_project'.g' $other_files/autoPoseCfgLipsResNetTrain > $Lips_train_resnet/pose_cfg.yaml
 sed 's.REPLACE_PATH.'$Lips_project'.g' $other_files/autoPoseCfgLipsMobileNetTest > $Lips_test_mobile/pose_cfg.yaml
 sed 's.REPLACE_PATH.'$Lips_project'.g' $other_files/autoPoseCfgLipsMobilenetTrain > $Lips_train_mobile/pose_cfg.yaml
-
-#cp $other_files/autoConfigUltrasound $US_project/config.yaml
-#cp $other_files/autoPoseCfgUSResNetTest $US_test_resnet/pose_cfg.yaml
-#cp $other_files/autoPoseCfgUSResNetTrain $US_train_resnet/pose_cfg.yaml
-#cp $other_files/autoPoseCfgUSMobileTest $US_test_mobile/pose_cfg.yaml
-#cp $other_files/autoPoseCfgUSMobileTrain $US_train_mobile/pose_cfg.yaml
-#cp $other_files/autoConfigLips $Lips_project/config.yaml
-#cp $other_files/autoPoseCfgLipsResNetTest $Lips_test_resnet/pose_cfg.yaml
-#cp $other_files/autoPoseCfgLipsResNetTrain $Lips_train_resnet/pose_cfg.yaml
-#cp $other_files/autoPoseCfgLipsMobileTest $Lips_test_mobile/pose_cfg.yaml
-#cp $other_files/autoPoseCfgLipsMobileTrain $Lips_train_mobile/pose_cfg.yaml
