@@ -30,7 +30,7 @@ After you have installed Kaldi, this repo should be placed in the kaldi/egs dire
 
 The experiment originally uses the BEEP dictionary to build the lexicon, as most speakers in the TaL corpus are British. You can download it here: https://www.openslr.org/14/
 
-Alternatively, setting the 'beep' option in conf.ini, you can choose to build the lexicon using the CMUdict in nltk.
+Alternatively, setting the 'beep' option in conf.ini, you can choose to build the lexicon using the CMUdict in nltk. You do not need to download anything for this.
 
 ## 2. Running the experiment
 
