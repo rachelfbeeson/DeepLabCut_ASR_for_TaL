@@ -37,10 +37,15 @@ class FeatureMaker:
 
     def process_features(self, utterance):
         """ Grabs CSV file output by DLC for a particular utterance and creates features """
-        csv_file = glob.glob(os.path.join(self.video_folder, f'{utterance.id}*.csv'))[0]
-        self.features = pandas.read_csv(csv_file,
+        if utterance.base_path is None:
+            format_utt = utterance.id.replace('-', '_', 1)
+        else:
+            format_utt = utterance.id
+        if glob.glob(os.path.join(self.video_folder, f'{format_utt}*.csv')):
+            csv_file = glob.glob(os.path.join(self.video_folder, f'{format_utt}*.csv'))[0]
+            self.features = pandas.read_csv(csv_file,
                                         header=[1, 2])  # headers are two parts, anatomy and then x, y or likelihood
-        self.feature_maker()
+            self.feature_maker()
 
     def feature_maker(self):
         """ Driver for feature manipulation. """
