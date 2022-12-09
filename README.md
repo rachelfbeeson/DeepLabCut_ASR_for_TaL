@@ -38,6 +38,10 @@ Alternatively, setting the 'beep' option in conf.ini, you can choose to build th
 
 At a minimum, you must edit the conf.ini to contain the correct 'Paths'. The other options are set to the original experiment options, but you can change these as you wish.
 
+If you do not wish to run the video transformation and DLC (these can take a couple days even on GPU), you can instead nab the CSVs I extracted from the original experiment here: https://drive.google.com/drive/folders/1JVJpq7Q6ftFdgSnkyOimPNZCfD4-iuxK?usp=share_link
+
+Download the entire directory and set the video_and_csv path to point to the high-level (features) directory, and set the tal_path path to point to the all_text file. Then, set the make_features option to False. The project should build utterances using the info contained in the all_text file, and then process the features from the CSV files accordingly.
+
 ### b. Placing the Utils and Steps directories
 
 This experiment uses the /utils and /steps directiories from the wsj egs in Kaldi. In order to properly run the experiment, you will need to either create a symlink to these directories, or copy them into tal_dlc.
